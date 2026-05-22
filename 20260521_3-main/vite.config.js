@@ -3,5 +3,5 @@ import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
   plugins: [vue()],
-  base: '/20260521_3/'   // ← 改成你的 GitHub Repository 名稱
+  base: '/20260521_3-main/',  // ← 改成你的 GitHub Repository 名稱
 })
