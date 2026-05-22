@@ -1,0 +1,52 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: 'main' # 如果你的主分支叫 master，請改成 'master'
+
+# 允許此工作流程對 GitHub Pages 進行部署
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: '20260521_3-main/package-lock.json' # 指向內層的 lock 檔
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: 20260521_3-main # 指定在內層資料夾執行
+
+      - name: Build
+        run: npm run build
+        working-directory: 20260521_3-main # 指定在內層資料夾執行
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '20260521_3-main/dist' # Vite 打包後的資料夾位置
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
